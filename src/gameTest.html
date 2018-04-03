@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../dist/static/css/style.css">
+</head>
+<body>
+	
+	<canvas id="stage" width="750" height="1334"></canvas>
+	<div id="progress"><span></span></div>
+
+	<script type="text/javascript" src="assets/lib/easeljs-0.8.2.combined.js"></script>
+	<script type="text/javascript" src="assets/lib/preloadjs-0.6.2.combined.js"></script>
+	<script type="text/javascript">
+	var stage = new createjs.Stage("stage");
+	createjs.Touch.enable(stage);
+
+	var queue = new createjs.LoadQueue();
+	queue.loadManifest([
+		{id:'loadbg',src:'assets/images/load_bg.jpg'},
+		{id:'scene01bg',src:'assets/images/scene01_bg.jpg'},
+		{id:'girl',src:'assets/images/girl.png'},
+		{id:'girlrole',src:'assets/images/girl_role.png'}
+	]);
+
+	
+
+	createjs.Ticker.setFPS(5); 
+
+	// 场景更新
+	createjs.Ticker.on("tick", handleTick);
+	function handleTick(event) {
+		
+		stage.update(event);
+	}
+
+	//资源加载完毕处理
+	queue.on('complete',function(){
+		var container01 = new createjs.Container();
+		container01.addChild(new createjs.Bitmap(queue.getResult('scene01bg')));
+
+		var scene01Pics = {
+			bg: queue.getResult('scene01bg'),
+			girl: queue.getResult('girl'),
+			girlrole: queue.getResult('girlrole')
+		}
+
+		const girlRollSprite = new createjs.SpriteSheet({
+							images:[scene01Pics.girlrole],
+							frames:{
+								width:545,
+								height:515,
+								count:3
+							},
+							animations:{
+								 roll: {
+						            frames: [0,1,2,2,1,0]
+						        }
+							}
+						});
+		
+		//女孩晃动动画
+		var girlAnimation = new createjs.Sprite(girlRollSprite,"roll");
+
+		container01.addChild(girlAnimation);
+
+		stage.addChild(container01);
+
+	});
+
+	
+
+	
+
+
+
+
+
+
+
+	</script>
+</body>
+</html>
